@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,6 +19,7 @@
             --success: #4CAF50;
             --error: #F44336;
             --warning: #FFC107;
+            --danger: #DC3545;
         }
 
         * {
@@ -414,6 +416,7 @@
             overflow: hidden;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .user-card:hover {
@@ -458,6 +461,8 @@
             font-size: 14px;
             color: var(--text-light);
             margin-bottom: 5px;
+            display: flex;
+            align-items: center;
         }
 
         .user-detail i {
@@ -570,6 +575,37 @@
             background: #3A56E0;
         }
 
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        /* Group checklist */
+        .group-check-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .group-check-item label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .group-check-item input {
+            margin-right: 10px;
+        }
+
+        .group-check-item small {
+            margin-left: 5px;
+            color: var(--text-light);
+            font-size: 0.8em;
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -581,6 +617,12 @@
             font-size: 60px;
             margin-bottom: 20px;
             opacity: 0.3;
+        }
+
+        .loading-groups {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
         }
 
         /* Animations */
@@ -779,71 +821,6 @@
         
         <div class="user-grid" id="user-grid">
             <!-- User cards will be generated here -->
-            <div class="user-card">
-                <div class="user-card-header">
-                    <div class="user-avatar-sm">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-card-info">
-                        <h3>johndoe</h3>
-                    </div>
-                    <i class="fas fa-ellipsis-v"></i>
-                </div>
-                <div class="user-card-body">
-                    <div class="user-detail">
-                        <i class="fas fa-user"></i>
-                        <span>John Doe</span>
-                    </div>
-                    <div class="user-detail">
-                        <i class="fas fa-envelope"></i>
-                        <span>john.doe@example.com</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="user-card">
-                <div class="user-card-header">
-                    <div class="user-avatar-sm">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-card-info">
-                        <h3>janedoe</h3>
-                    </div>
-                    <i class="fas fa-ellipsis-v"></i>
-                </div>
-                <div class="user-card-body">
-                    <div class="user-detail">
-                        <i class="fas fa-user"></i>
-                        <span>Jane Doe</span>
-                    </div>
-                    <div class="user-detail">
-                        <i class="fas fa-envelope"></i>
-                        <span>jane.doe@example.com</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="user-card">
-                <div class="user-card-header">
-                    <div class="user-avatar-sm">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-card-info">
-                        <h3>mike_smith</h3>
-                    </div>
-                    <i class="fas fa-ellipsis-v"></i>
-                </div>
-                <div class="user-card-body">
-                    <div class="user-detail">
-                        <i class="fas fa-user"></i>
-                        <span>Mike Smith</span>
-                    </div>
-                    <div class="user-detail">
-                        <i class="fas fa-envelope"></i>
-                        <span>mike.smith@example.com</span>
-                    </div>
-                </div>
-            </div>
         </div>
         
         <button class="add-user-btn" id="add-user-btn">
@@ -874,10 +851,44 @@
                     <label for="new-email">Email</label>
                     <input type="email" id="new-email" class="form-control" placeholder="Enter email">
                 </div>
+                <div class="form-group">
+                    <label>Groups</label>
+                    <div id="groups-checklist" style="max-height: 200px; overflow-y: auto;">
+                        <div class="loading-groups">Loading groups...</div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancel-create">Cancel</button>
                 <button class="btn btn-primary" id="confirm-create">Create</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Actions Modal -->
+    <div class="modal" id="user-actions-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                User Actions
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Change Groups</label>
+                    <div id="user-groups-checklist" style="max-height: 200px; overflow-y: auto;">
+                        <!-- Groups will be loaded here -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Reset Password</label>
+                    <input type="password" id="new-user-password" class="form-control" placeholder="Enter new password">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="delete-user-btn">
+                    <i class="fas fa-trash"></i> Delete User
+                </button>
+                <button class="btn btn-secondary" id="cancel-actions">Cancel</button>
+                <button class="btn btn-primary" id="save-user-actions">Save Changes</button>
             </div>
         </div>
     </div>
@@ -888,12 +899,15 @@
         let isAdminLogin = false;
         let currentUser = null;
         let adminCredentials = null;
+        let allGroups = [];
+        let currentSelectedUser = null;
         
         // DOM Elements
         const loginScreen = document.getElementById('login-screen');
         const userDashboard = document.getElementById('user-dashboard');
         const adminDashboard = document.getElementById('admin-dashboard');
         const createUserModal = document.getElementById('create-user-modal');
+        const userActionsModal = document.getElementById('user-actions-modal');
         
         // Login Elements
         const usernameInput = document.getElementById('username');
@@ -929,6 +943,12 @@
         const cancelCreateBtn = document.getElementById('cancel-create');
         const confirmCreateBtn = document.getElementById('confirm-create');
         
+        // User Actions Modal Elements
+        const newUserPasswordInput = document.getElementById('new-user-password');
+        const deleteUserBtn = document.getElementById('delete-user-btn');
+        const cancelActionsBtn = document.getElementById('cancel-actions');
+        const saveUserActionsBtn = document.getElementById('save-user-actions');
+        
         // Event Listeners
         document.addEventListener('DOMContentLoaded', initApp);
         
@@ -944,19 +964,24 @@
             adminRefreshBtn.addEventListener('click', fetchUsers);
             adminLogoutBtn.addEventListener('click', logout);
             searchUsersInput.addEventListener('input', filterUsers);
-            addUserBtn.addEventListener('click', () => {
-                createUserModal.style.display = 'flex';
-                setTimeout(() => createUserModal.classList.add('show'), 10);
-            });
+            addUserBtn.addEventListener('click', showCreateUserModal);
             
             // Create User Modal
             cancelCreateBtn.addEventListener('click', closeCreateUserModal);
             confirmCreateBtn.addEventListener('click', createUser);
             
-            // Close modal when clicking outside
+            // User Actions Modal
+            cancelActionsBtn.addEventListener('click', closeUserActionsModal);
+            saveUserActionsBtn.addEventListener('click', saveUserActions);
+            deleteUserBtn.addEventListener('click', deleteUser);
+            
+            // Close modals when clicking outside
             window.addEventListener('click', (e) => {
                 if (e.target === createUserModal) {
                     closeCreateUserModal();
+                }
+                if (e.target === userActionsModal) {
+                    closeUserActionsModal();
                 }
             });
         }
@@ -1015,11 +1040,12 @@
                             password: password
                         };
                         
-                        // Store users
-                        const users = data.users || [];
+                        // Load groups and users
+                        await loadGroups();
+                        await fetchUsers();
                         
                         // Show admin dashboard
-                        showAdminDashboard(users);
+                        showAdminDashboard();
                     } else {
                         // Store user info
                         currentUser = data.user_info || {};
@@ -1075,54 +1101,6 @@
             userDashboard.classList.add('slide-in-right');
         }
         
-        function showAdminDashboard(users) {
-            // Clear existing users
-            userGrid.innerHTML = '';
-            
-            // Add users to grid
-            if (users.length > 0) {
-                users.forEach(user => {
-                    const userCard = document.createElement('div');
-                    userCard.className = 'user-card';
-                    userCard.innerHTML = `
-                        <div class="user-card-header">
-                            <div class="user-avatar-sm">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="user-card-info">
-                                <h3>${user.username || 'Unknown'}</h3>
-                            </div>
-                            <i class="fas fa-ellipsis-v"></i>
-                        </div>
-                        <div class="user-card-body">
-                            ${user.displayName ? `<div class="user-detail">
-                                <i class="fas fa-user"></i>
-                                <span>${user.displayName}</span>
-                            </div>` : ''}
-                            ${user.mail ? `<div class="user-detail">
-                                <i class="fas fa-envelope"></i>
-                                <span>${user.mail}</span>
-                            </div>` : ''}
-                        </div>
-                    `;
-                    userGrid.appendChild(userCard);
-                });
-            } else {
-                userGrid.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-user-friends"></i>
-                        <p>No users found</p>
-                    </div>
-                `;
-            }
-            
-            // Show dashboard
-            loginScreen.style.display = 'none';
-            userDashboard.style.display = 'none';
-            adminDashboard.style.display = 'block';
-            adminDashboard.classList.add('slide-in-up');
-        }
-        
         async function fetchUsers() {
             if (!adminCredentials) return;
             
@@ -1141,7 +1119,7 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    showAdminDashboard(data.users || []);
+                    renderUsers(data.users || []);
                 } else {
                     showToast(data.error || 'Failed to fetch users', 'error');
                 }
@@ -1151,19 +1129,159 @@
             }
         }
         
-        function filterUsers() {
-            const query = searchUsersInput.value.toLowerCase();
-            const cards = userGrid.querySelectorAll('.user-card');
+        function renderUsers(users) {
+            // Clear existing users
+            userGrid.innerHTML = '';
             
-            cards.forEach(card => {
-                const username = card.querySelector('h3').textContent.toLowerCase();
-                const displayName = card.querySelector('.user-detail span')?.textContent.toLowerCase() || '';
-                const email = card.querySelectorAll('.user-detail span')[1]?.textContent.toLowerCase() || '';
+            // Add users to grid
+            if (users.length > 0) {
+                users.forEach(user => {
+                    const userCard = document.createElement('div');
+                    userCard.className = 'user-card';
+                    
+                    // Extract groups if available
+                    const groups = user.MemberOf ? user.MemberOf.split(',') : [];
+                    
+                    userCard.innerHTML = `
+                        <div class="user-card-header">
+                            <div class="user-avatar-sm">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-card-info">
+                                <h3>${user.SamAccountName || 'Unknown'}</h3>
+                            </div>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="user-card-body">
+                            ${user.Name ? `<div class="user-detail">
+                                <i class="fas fa-user"></i>
+                                <span>${user.Name}</span>
+                            </div>` : ''}
+                            ${user.Mail ? `<div class="user-detail">
+                                <i class="fas fa-envelope"></i>
+                                <span>${user.Mail}</span>
+                            </div>` : ''}
+                            ${groups.length > 0 ? `<div class="user-detail">
+                                <i class="fas fa-users"></i>
+                                <span>${groups.join(', ')}</span>
+                            </div>` : ''}
+                        </div>
+                    `;
+                    
+                    // Add click handler for the ellipsis button
+                    const ellipsisBtn = userCard.querySelector('.fa-ellipsis-v');
+                    ellipsisBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showUserActionsModal({
+                            username: user.SamAccountName,
+                            displayName: user.Name,
+                            mail: user.Mail,
+                            MemberOf: user.MemberOf || ''
+                        });
+                    });
+                    
+                    userGrid.appendChild(userCard);
+                });
+            } else {
+                userGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-friends"></i>
+                        <p>No users found</p>
+                    </div>
+                `;
+            }
+        }
+        function filterUsers() {
+    const query = searchUsersInput.value.toLowerCase();
+    const cards = userGrid.querySelectorAll('.user-card');
+    
+    cards.forEach(card => {
+        const username = card.querySelector('h3')?.textContent.toLowerCase() || '';
+        const displayName = card.querySelectorAll('.user-detail span')[0]?.textContent.toLowerCase() || '';
+        const email = card.querySelectorAll('.user-detail span')[1]?.textContent.toLowerCase() || '';
+        
+        if (username.includes(query) || displayName.includes(query) || email.includes(query)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+        
+        function showAdminDashboard() {
+            loginScreen.style.display = 'none';
+            userDashboard.style.display = 'none';
+            adminDashboard.style.display = 'block';
+            adminDashboard.classList.add('slide-in-right');
+        }
+        
+        async function loadGroups() {
+            if (!adminCredentials) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        app_username: adminCredentials.username,
+                        app_password: adminCredentials.password,
+                        action: "get_groups"
+                    })
+                });
                 
-                if (username.includes(query) || displayName.includes(query) || email.includes(query)) {
-                    card.style.display = 'block';
+                const data = await response.json();
+                
+                if (data.success) {
+                    allGroups = data.groups || [];
+                    return allGroups;
                 } else {
-                    card.style.display = 'none';
+                    showToast(data.error || 'Failed to load groups', 'error');
+                    return [];
+                }
+            } catch (error) {
+                console.error('Load groups error:', error);
+                showToast('Connection error', 'error');
+                return [];
+            }
+        }
+        
+        function showCreateUserModal() {
+            // Clear previous inputs
+            newUsernameInput.value = '';
+            newPasswordInput.value = '';
+            newDisplayNameInput.value = '';
+            newEmailInput.value = '';
+            
+            // Load groups checklist
+            const groupsChecklist = document.getElementById('groups-checklist');
+            groupsChecklist.innerHTML = '<div class="loading-groups">Loading groups...</div>';
+            
+            createUserModal.style.display = 'flex';
+            setTimeout(() => {
+                createUserModal.classList.add('show');
+            }, 10);
+            
+            // Load groups async
+            loadGroups().then(groups => {
+                if (groups.length > 0) {
+                    groupsChecklist.innerHTML = '';
+                    groups.forEach(group => {
+                        const groupItem = document.createElement('div');
+                        groupItem.className = 'group-check-item';
+                        groupItem.innerHTML = `
+                            <label>
+                                <input type="checkbox" name="groups" value="${group.Name}">
+                                ${group.Name}
+                                <small>${group.Description || ''}</small>
+                            </label>
+                        `;
+                        groupsChecklist.appendChild(groupItem);
+                    });
+                } else {
+                    groupsChecklist.innerHTML = '<div class="empty-state">No groups found</div>';
                 }
             });
         }
@@ -1172,27 +1290,199 @@
             createUserModal.classList.remove('show');
             setTimeout(() => {
                 createUserModal.style.display = 'none';
-                // Clear inputs
-                newUsernameInput.value = '';
-                newPasswordInput.value = '';
-                newDisplayNameInput.value = '';
-                newEmailInput.value = '';
             }, 300);
         }
         
         async function createUser() {
             const username = newUsernameInput.value.trim();
             const password = newPasswordInput.value.trim();
-            const displayName = newDisplayNameInput.value.trim();
-            const email = newEmailInput.value.trim();
+            const displayName = newDisplayNameInput.value.trim() || username;
+            const email = newEmailInput.value.trim() || `${username}@pe.com`;
             
             if (!username || !password) {
                 showToast('Username and password are required', 'error');
                 return;
             }
             
-            if (!adminCredentials) {
-                showToast('Admin credentials not available', 'error');
+            // Get selected groups
+            const checkboxes = document.querySelectorAll('#groups-checklist input[type="checkbox"]:checked');
+            const groups = Array.from(checkboxes).map(cb => cb.value);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        app_username: adminCredentials.username,
+                        app_password: adminCredentials.password,
+                        action: "create_user",
+                        new_username: username,
+                        new_password: password,
+                        displayName: displayName,
+                        mail: email,
+                        groups: groups
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(`User ${username} created successfully`, 'success');
+                    closeCreateUserModal();
+                    fetchUsers(); // Refresh user list
+                } else {
+                    showToast(data.error || 'Failed to create user', 'error');
+                }
+            } catch (error) {
+                console.error('Create user error:', error);
+                showToast('Connection error', 'error');
+            }
+        }
+        
+        function showUserActionsModal(user) {
+            currentSelectedUser = user;
+            
+            // Clear previous inputs
+            newUserPasswordInput.value = '';
+            
+            // Load groups checklist
+            const groupsChecklist = document.getElementById('user-groups-checklist');
+            groupsChecklist.innerHTML = '<div class="loading-groups">Loading groups...</div>';
+            
+            userActionsModal.style.display = 'flex';
+            setTimeout(() => {
+                userActionsModal.classList.add('show');
+            }, 10);
+            
+            // Load groups async with current user's groups checked
+            loadGroups().then(groups => {
+                if (groups.length > 0) {
+                    groupsChecklist.innerHTML = '';
+                    
+                    // Get user's current groups
+                    const userGroups = user.MemberOf ? user.MemberOf.split(',') : [];
+                    
+                    groups.forEach(group => {
+                        const isChecked = userGroups.includes(group.Name);
+                        const groupItem = document.createElement('div');
+                        groupItem.className = 'group-check-item';
+                        groupItem.innerHTML = `
+                            <label>
+                                <input type="checkbox" name="user-groups" value="${group.Name}" ${isChecked ? 'checked' : ''}>
+                                ${group.Name}
+                                <small>${group.Description || ''}</small>
+                            </label>
+                        `;
+                        groupsChecklist.appendChild(groupItem);
+                    });
+                } else {
+                    groupsChecklist.innerHTML = '<div class="empty-state">No groups found</div>';
+                }
+            });
+        }
+        
+        function closeUserActionsModal() {
+            userActionsModal.classList.remove('show');
+            setTimeout(() => {
+                userActionsModal.style.display = 'none';
+            }, 300);
+        }
+        
+        async function saveUserActions() {
+            if (!currentSelectedUser) return;
+            
+            const username = currentSelectedUser.username;
+            const newPassword = newUserPasswordInput.value.trim();
+            
+            // Get selected groups
+            const checkboxes = document.querySelectorAll('#user-groups-checklist input[type="checkbox"]');
+            const selectedGroups = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+            
+            // Get user's current groups
+            const currentGroups = currentSelectedUser.MemberOf ? currentSelectedUser.MemberOf.split(',') : [];
+            
+            try {
+                // Update password if provided
+                if (newPassword) {
+                    const response = await fetch(`${API_BASE_URL}/admin`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            app_username: adminCredentials.username,
+                            app_password: adminCredentials.password,
+                            action: "reset_password",
+                            username: username,
+                            current_password: "", // Not needed when using admin privileges
+                            new_password: newPassword
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!data.success) {
+                        showToast(data.error || 'Failed to update password', 'error');
+                        return;
+                    }
+                }
+                
+                // Update group memberships
+                for (const group of allGroups) {
+                    const groupName = group.Name;
+                    const shouldBeMember = selectedGroups.includes(groupName);
+                    const isMember = currentGroups.includes(groupName);
+                    
+                    if (shouldBeMember && !isMember) {
+                        // Add to group
+                        await fetch(`${API_BASE_URL}/admin`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                app_username: adminCredentials.username,
+                                app_password: adminCredentials.password,
+                                action: "add_to_group",
+                                username: username,
+                                group_name: groupName
+                            })
+                        });
+                    } else if (!shouldBeMember && isMember) {
+                        // Remove from group
+                        await fetch(`${API_BASE_URL}/admin`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                app_username: adminCredentials.username,
+                                app_password: adminCredentials.password,
+                                action: "remove_from_group",
+                                username: username,
+                                group_name: groupName
+                            })
+                        });
+                    }
+                }
+                
+                showToast('User updated successfully', 'success');
+                closeUserActionsModal();
+                fetchUsers(); // Refresh user list
+            } catch (error) {
+                console.error('Update user error:', error);
+                showToast('Connection error', 'error');
+            }
+        }
+        
+        async function deleteUser() {
+            if (!currentSelectedUser) return;
+            
+            if (!confirm(`Are you sure you want to delete user ${currentSelectedUser.username}? This action cannot be undone.`)) {
                 return;
             }
             
@@ -1205,51 +1495,50 @@
                     body: JSON.stringify({
                         app_username: adminCredentials.username,
                         app_password: adminCredentials.password,
-                        action: 'create_user',
-                        new_username: username,
-                        new_password: password,
-                        displayName: displayName,
-                        mail: email
+                        action: "delete_user",
+                        username: currentSelectedUser.username
                     })
                 });
                 
                 const data = await response.json();
                 
                 if (data.success) {
-                    showToast(data.message || 'User created successfully', 'success');
-                    closeCreateUserModal();
+                    showToast(`User ${currentSelectedUser.username} deleted successfully`, 'success');
+                    closeUserActionsModal();
                     fetchUsers(); // Refresh user list
                 } else {
-                    showToast(data.error || 'User creation failed', 'error');
+                    showToast(data.error || 'Failed to delete user', 'error');
                 }
             } catch (error) {
-                console.error('Create user error:', error);
+                console.error('Delete user error:', error);
                 showToast('Connection error', 'error');
             }
         }
         
         function logout() {
-            // Reset state
+            // Reset all states
             isAdminLogin = false;
             currentUser = null;
             adminCredentials = null;
+            allGroups = [];
+            currentSelectedUser = null;
             
             // Clear inputs
             usernameInput.value = '';
             passwordInput.value = '';
             
+            // Hide all dashboards and show login screen
+            userDashboard.style.display = 'none';
+            adminDashboard.style.display = 'none';
+            loginScreen.style.display = 'block';
+            
             // Reset role toggle
             roleIcon.className = 'fas fa-user';
             roleText.textContent = 'User Mode';
             switchRoleBtn.textContent = 'Switch to Admin';
-            
-            // Show login screen
-            userDashboard.style.display = 'none';
-            adminDashboard.style.display = 'none';
-            loginScreen.style.display = 'block';
         }
         
-        function showToast(message, type) {
+        function showToast(message, type = 'info') {
             // Create toast element
             const toast = document.createElement('div');
             toast.className = `toast toast-${type}`;
@@ -1258,7 +1547,7 @@
             // Add to body
             document.body.appendChild(toast);
             
-            // Show toast
+            // Show with animation
             setTimeout(() => {
                 toast.classList.add('show');
             }, 10);
@@ -1272,70 +1561,43 @@
             }, 3000);
         }
         
-        // Add toast styles dynamically
+        // Add toast styles
         const toastStyles = document.createElement('style');
         toastStyles.textContent = `
             .toast {
                 position: fixed;
                 bottom: 20px;
-                right: 20px;
-                padding: 15px 25px;
-                border-radius: 10px;
+                left: 50%;
+                transform: translateX(-50%) translateY(100px);
+                background: #333;
                 color: white;
-                font-weight: 500;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-                transform: translateY(100px);
+                padding: 12px 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 3000;
                 opacity: 0;
                 transition: all 0.3s ease;
-                z-index: 3000;
             }
             
             .toast.show {
-                transform: translateY(0);
+                transform: translateX(-50%) translateY(0);
                 opacity: 1;
+            }
+            
+            .toast-success {
+                background: var(--success);
             }
             
             .toast-error {
                 background: var(--error);
             }
             
-            .toast-success {
-                background: var(--success);
+            .toast-warning {
+                background: var(--warning);
+                color: #333;
             }
         `;
         document.head.appendChild(toastStyles);
-        
-        // Mock API responses for demonstration
-        window.mockApiResponse = function() {
-            return {
-                success: true,
-                user_info: {
-                    username: "johndoe",
-                    displayName: "John Doe",
-                    domain: "example.com",
-                    mail: "john.doe@example.com",
-                    dn: "CN=John Doe,OU=Users,DC=example,DC=com",
-                    memberOf: ["Domain Users", "Marketing Team", "Project Managers"]
-                },
-                users: [
-                    {
-                        username: "johndoe",
-                        displayName: "John Doe",
-                        mail: "john.doe@example.com"
-                    },
-                    {
-                        username: "janedoe",
-                        displayName: "Jane Doe",
-                        mail: "jane.doe@example.com"
-                    },
-                    {
-                        username: "mike_smith",
-                        displayName: "Mike Smith",
-                        mail: "mike.smith@example.com"
-                    }
-                ]
-            };
-        }
     </script>
 </body>
 </html>
