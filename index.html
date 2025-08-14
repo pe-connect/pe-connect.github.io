@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PE Connect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361EE;
+            --secondary: #3A0CA3;
+            --accent: #7209B7;
+            --background: #F8F9FA;
+            --card-bg: #FFFFFF;
+            --text-dark: #333333;
+            --text-light: #777777;
+            --success: #4CAF50;
+            --error: #F44336;
+            --warning: #FFC107;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Login Screen */
+        #login-screen {
+            width: 100%;
+            max-width: 500px;
+            background: var(--background);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            position: relative;
+            display: block;
+        }
+
+        .login-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .logo-circle {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+        }
+
+        .logo-circle i {
+            font-size: 48px;
+            color: white;
+        }
+
+        .login-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .login-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .login-form {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 16px 16px 50px;
+            border: none;
+            background: white;
+            border-radius: 12px;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .role-toggle {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background: rgba(67, 97, 238, 0.05);
+        }
+
+        .role-toggle i {
+            font-size: 24px;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .role-toggle .btn-switch {
+            margin-left: auto;
+            padding: 8px 15px;
+            background: rgba(67, 97, 238, 0.1);
+            border: none;
+            border-radius: 8px;
+            color: var(--primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .role-toggle .btn-switch:hover {
+            background: rgba(67, 97, 238, 0.2);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-login:hover {
+            background: #3A56E0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-login.loading .spinner {
+            display: inline-block;
+        }
+
+        .btn-login .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Dashboard Screens */
+        .dashboard-screen {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background: var(--background);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .app-bar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-bar h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .app-bar .actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .app-bar .actions button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--primary);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .app-bar .actions button:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        /* User Dashboard */
+        .user-profile-header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+        }
+
+        .user-profile-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .dashboard-content {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .info-card i {
+            font-size: 24px;
+            color: var(--primary);
+            margin-right: 15px;
+            min-width: 30px;
+        }
+
+        .info-content h3 {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .info-content p {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .group-list {
+            list-style: none;
+        }
+
+        .group-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .group-item:last-child {
+            border-bottom: none;
+        }
+
+        .group-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .group-icon i {
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .group-name {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        /* Admin Dashboard */
+        .search-container {
+            padding: 15px;
+            background: white;
+            position: sticky;
+            top: 70px;
+            z-index: 50;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .user-grid {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .user-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-card-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar-sm {
+            width: 50px;
+            height: 50px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            font-size: 20px;
+            color: var(--primary);
+        }
+
+        .user-card-info {
+            flex: 1;
+        }
+
+        .user-card-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .user-card-body {
+            padding: 0 20px 20px 20px;
+        }
+
+        .user-detail {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .user-detail i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+        }
+
+        .add-user-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .add-user-btn:hover {
+            transform: scale(1.1);
+            background: #3A56E0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-header {
+            padding: 20px;
+            background: var(--primary);
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 15px 25px;
+            background: #f9f9f9;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: var(--text-dark);
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3A56E0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        /* Animations */
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.5s ease forwards;
+        }
+
+        .slide-in-up {
+            animation: slideInUp 0.7s ease forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .user-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .app-bar h2 {
+                font-size: 18px;
+            }
+            
+            .login-header {
+                padding: 30px 15px;
+            }
+            
+            .login-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="container">
+        <div class="login-header">
+            <div class="logo-circle">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h1>PE Connect</h1>
+            <p>Secure Enterprise Access</p>
+        </div>
+        
+        <div class="login-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" class="form-control" placeholder="Enter your username">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password">
+                </div>
+            </div>
+            
+            <div class="role-toggle">
+                <i class="fas fa-user" id="role-icon"></i>
+                <span id="role-text">User Mode</span>
+                <button class="btn-switch" id="switch-role">Switch to Admin</button>
+            </div>
+            
+            <button class="btn-login" id="login-btn">
+                <span class="spinner"></span>
+                SIGN IN
+            </button>
+        </div>
+    </div>
+    
+    <!-- User Dashboard -->
+    <div id="user-dashboard" class="dashboard-screen">
+        <div class="app-bar">
+            <h2 id="user-greeting">Welcome, User</h2>
+            <div class="actions">
+                <button id="user-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="user-profile-header">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <h2 id="user-display-name">John Doe</h2>
+        </div>
+        
+        <div class="dashboard-content">
+            <h3 class="section-title">Account Information</h3>
+            
+            <div class="info-card">
+                <i class="fas fa-user"></i>
+                <div class="info-content">
+                    <h3>Username</h3>
+                    <p id="user-username">johndoe</p>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <i class="fas fa-globe"></i>
+                <div class="info-content">
+                    <h3>Domain</h3>
+                    <p id="user-domain">example.com</p>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <i class="fas fa-envelope"></i>
+                <div class="info-content">
+                    <h3>Email</h3>
+                    <p id="user-email">john.doe@example.com</p>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <i class="fas fa-id-card"></i>
+                <div class="info-content">
+                    <h3>Distinguished Name</h3>
+                    <p id="user-dn">CN=John Doe,OU=Users,DC=example,DC=com</p>
+                </div>
+            </div>
+            
+            <h3 class="section-title">Group Memberships (<span id="group-count">3</span>)</h3>
+            
+            <ul class="group-list" id="group-list">
+                <li class="group-item">
+                    <div class="group-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="group-name">Domain Users</div>
+                    <i class="fas fa-chevron-right"></i>
+                </li>
+                <li class="group-item">
+                    <div class="group-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="group-name">Marketing Team</div>
+                    <i class="fas fa-chevron-right"></i>
+                </li>
+                <li class="group-item">
+                    <div class="group-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="group-name">Project Managers</div>
+                    <i class="fas fa-chevron-right"></i>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="dashboard-screen">
+        <div class="app-bar">
+            <h2>Admin Dashboard</h2>
+            <div class="actions">
+                <button id="admin-refresh">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button id="admin-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-users" placeholder="Search users...">
+            </div>
+        </div>
+        
+        <div class="user-grid" id="user-grid">
+            <!-- User cards will be generated here -->
+            <div class="user-card">
+                <div class="user-card-header">
+                    <div class="user-avatar-sm">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-card-info">
+                        <h3>johndoe</h3>
+                    </div>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+                <div class="user-card-body">
+                    <div class="user-detail">
+                        <i class="fas fa-user"></i>
+                        <span>John Doe</span>
+                    </div>
+                    <div class="user-detail">
+                        <i class="fas fa-envelope"></i>
+                        <span>john.doe@example.com</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="user-card">
+                <div class="user-card-header">
+                    <div class="user-avatar-sm">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-card-info">
+                        <h3>janedoe</h3>
+                    </div>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+                <div class="user-card-body">
+                    <div class="user-detail">
+                        <i class="fas fa-user"></i>
+                        <span>Jane Doe</span>
+                    </div>
+                    <div class="user-detail">
+                        <i class="fas fa-envelope"></i>
+                        <span>jane.doe@example.com</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="user-card">
+                <div class="user-card-header">
+                    <div class="user-avatar-sm">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-card-info">
+                        <h3>mike_smith</h3>
+                    </div>
+                    <i class="fas fa-ellipsis-v"></i>
+                </div>
+                <div class="user-card-body">
+                    <div class="user-detail">
+                        <i class="fas fa-user"></i>
+                        <span>Mike Smith</span>
+                    </div>
+                    <div class="user-detail">
+                        <i class="fas fa-envelope"></i>
+                        <span>mike.smith@example.com</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="add-user-btn" id="add-user-btn">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+    
+    <!-- Create User Modal -->
+    <div class="modal" id="create-user-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                Create New User
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="new-username">Username*</label>
+                    <input type="text" id="new-username" class="form-control" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label for="new-password">Password*</label>
+                    <input type="password" id="new-password" class="form-control" placeholder="Enter password">
+                </div>
+                <div class="form-group">
+                    <label for="new-display-name">Display Name</label>
+                    <input type="text" id="new-display-name" class="form-control" placeholder="Enter display name">
+                </div>
+                <div class="form-group">
+                    <label for="new-email">Email</label>
+                    <input type="email" id="new-email" class="form-control" placeholder="Enter email">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-create">Cancel</button>
+                <button class="btn btn-primary" id="confirm-create">Create</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // API Configuration
+        const API_BASE_URL = 'https://4fa5c76fcec7.ngrok-free.app';
+        let isAdminLogin = false;
+        let currentUser = null;
+        let adminCredentials = null;
+        
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const userDashboard = document.getElementById('user-dashboard');
+        const adminDashboard = document.getElementById('admin-dashboard');
+        const createUserModal = document.getElementById('create-user-modal');
+        
+        // Login Elements
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const roleIcon = document.getElementById('role-icon');
+        const roleText = document.getElementById('role-text');
+        const switchRoleBtn = document.getElementById('switch-role');
+        const loginBtn = document.getElementById('login-btn');
+        
+        // User Dashboard Elements
+        const userGreeting = document.getElementById('user-greeting');
+        const userDisplayName = document.getElementById('user-display-name');
+        const userUsername = document.getElementById('user-username');
+        const userDomain = document.getElementById('user-domain');
+        const userEmail = document.getElementById('user-email');
+        const userDN = document.getElementById('user-dn');
+        const groupCount = document.getElementById('group-count');
+        const groupList = document.getElementById('group-list');
+        const userLogoutBtn = document.getElementById('user-logout');
+        
+        // Admin Dashboard Elements
+        const adminRefreshBtn = document.getElementById('admin-refresh');
+        const adminLogoutBtn = document.getElementById('admin-logout');
+        const searchUsersInput = document.getElementById('search-users');
+        const userGrid = document.getElementById('user-grid');
+        const addUserBtn = document.getElementById('add-user-btn');
+        
+        // Create User Modal Elements
+        const newUsernameInput = document.getElementById('new-username');
+        const newPasswordInput = document.getElementById('new-password');
+        const newDisplayNameInput = document.getElementById('new-display-name');
+        const newEmailInput = document.getElementById('new-email');
+        const cancelCreateBtn = document.getElementById('cancel-create');
+        const confirmCreateBtn = document.getElementById('confirm-create');
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', initApp);
+        
+        function initApp() {
+            // Login Screen
+            switchRoleBtn.addEventListener('click', toggleLoginRole);
+            loginBtn.addEventListener('click', handleLogin);
+            
+            // User Dashboard
+            userLogoutBtn.addEventListener('click', logout);
+            
+            // Admin Dashboard
+            adminRefreshBtn.addEventListener('click', fetchUsers);
+            adminLogoutBtn.addEventListener('click', logout);
+            searchUsersInput.addEventListener('input', filterUsers);
+            addUserBtn.addEventListener('click', () => {
+                createUserModal.style.display = 'flex';
+                setTimeout(() => createUserModal.classList.add('show'), 10);
+            });
+            
+            // Create User Modal
+            cancelCreateBtn.addEventListener('click', closeCreateUserModal);
+            confirmCreateBtn.addEventListener('click', createUser);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === createUserModal) {
+                    closeCreateUserModal();
+                }
+            });
+        }
+        
+        function toggleLoginRole() {
+            isAdminLogin = !isAdminLogin;
+            
+            if (isAdminLogin) {
+                roleIcon.className = 'fas fa-user-shield';
+                roleText.textContent = 'Admin Mode';
+                switchRoleBtn.textContent = 'Switch to User';
+            } else {
+                roleIcon.className = 'fas fa-user';
+                roleText.textContent = 'User Mode';
+                switchRoleBtn.textContent = 'Switch to Admin';
+            }
+        }
+        
+        async function handleLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            if (!username || !password) {
+                showToast('Please enter both username and password', 'error');
+                return;
+            }
+            
+            // Show loading state
+            loginBtn.classList.add('loading');
+            
+            try {
+                const endpoint = isAdminLogin ? '/admin' : '/applogin';
+                const body = isAdminLogin ? {
+                    app_username: username,
+                    app_password: password
+                } : {
+                    username: username,
+                    password: password
+                };
+                
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (isAdminLogin) {
+                        // Save admin credentials for subsequent requests
+                        adminCredentials = {
+                            username: username,
+                            password: password
+                        };
+                        
+                        // Store users
+                        const users = data.users || [];
+                        
+                        // Show admin dashboard
+                        showAdminDashboard(users);
+                    } else {
+                        // Store user info
+                        currentUser = data.user_info || {};
+                        
+                        // Show user dashboard
+                        showUserDashboard();
+                    }
+                } else {
+                    showToast(data.error || 'Login failed', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showToast('Connection error', 'error');
+            } finally {
+                loginBtn.classList.remove('loading');
+            }
+        }
+        
+        function showUserDashboard() {
+            // Update user info
+            userGreeting.textContent = `Welcome, ${currentUser.username || 'User'}`;
+            userDisplayName.textContent = currentUser.displayName || 'User Profile';
+            userUsername.textContent = currentUser.username || '';
+            userDomain.textContent = currentUser.domain || '';
+            userEmail.textContent = currentUser.mail || 'N/A';
+            userDN.textContent = currentUser.dn || '';
+            
+            // Update groups
+            const groups = currentUser.memberOf || [];
+            groupCount.textContent = groups.length;
+            
+            // Clear group list
+            groupList.innerHTML = '';
+            
+            // Add groups to list
+            groups.forEach(group => {
+                const groupItem = document.createElement('li');
+                groupItem.className = 'group-item';
+                groupItem.innerHTML = `
+                    <div class="group-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="group-name">${group}</div>
+                    <i class="fas fa-chevron-right"></i>
+                `;
+                groupList.appendChild(groupItem);
+            });
+            
+            // Show dashboard
+            loginScreen.style.display = 'none';
+            adminDashboard.style.display = 'none';
+            userDashboard.style.display = 'block';
+            userDashboard.classList.add('slide-in-right');
+        }
+        
+        function showAdminDashboard(users) {
+            // Clear existing users
+            userGrid.innerHTML = '';
+            
+            // Add users to grid
+            if (users.length > 0) {
+                users.forEach(user => {
+                    const userCard = document.createElement('div');
+                    userCard.className = 'user-card';
+                    userCard.innerHTML = `
+                        <div class="user-card-header">
+                            <div class="user-avatar-sm">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-card-info">
+                                <h3>${user.username || 'Unknown'}</h3>
+                            </div>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </div>
+                        <div class="user-card-body">
+                            ${user.displayName ? `<div class="user-detail">
+                                <i class="fas fa-user"></i>
+                                <span>${user.displayName}</span>
+                            </div>` : ''}
+                            ${user.mail ? `<div class="user-detail">
+                                <i class="fas fa-envelope"></i>
+                                <span>${user.mail}</span>
+                            </div>` : ''}
+                        </div>
+                    `;
+                    userGrid.appendChild(userCard);
+                });
+            } else {
+                userGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-friends"></i>
+                        <p>No users found</p>
+                    </div>
+                `;
+            }
+            
+            // Show dashboard
+            loginScreen.style.display = 'none';
+            userDashboard.style.display = 'none';
+            adminDashboard.style.display = 'block';
+            adminDashboard.classList.add('slide-in-up');
+        }
+        
+        async function fetchUsers() {
+            if (!adminCredentials) return;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        app_username: adminCredentials.username,
+                        app_password: adminCredentials.password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showAdminDashboard(data.users || []);
+                } else {
+                    showToast(data.error || 'Failed to fetch users', 'error');
+                }
+            } catch (error) {
+                console.error('Fetch users error:', error);
+                showToast('Connection error', 'error');
+            }
+        }
+        
+        function filterUsers() {
+            const query = searchUsersInput.value.toLowerCase();
+            const cards = userGrid.querySelectorAll('.user-card');
+            
+            cards.forEach(card => {
+                const username = card.querySelector('h3').textContent.toLowerCase();
+                const displayName = card.querySelector('.user-detail span')?.textContent.toLowerCase() || '';
+                const email = card.querySelectorAll('.user-detail span')[1]?.textContent.toLowerCase() || '';
+                
+                if (username.includes(query) || displayName.includes(query) || email.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        function closeCreateUserModal() {
+            createUserModal.classList.remove('show');
+            setTimeout(() => {
+                createUserModal.style.display = 'none';
+                // Clear inputs
+                newUsernameInput.value = '';
+                newPasswordInput.value = '';
+                newDisplayNameInput.value = '';
+                newEmailInput.value = '';
+            }, 300);
+        }
+        
+        async function createUser() {
+            const username = newUsernameInput.value.trim();
+            const password = newPasswordInput.value.trim();
+            const displayName = newDisplayNameInput.value.trim();
+            const email = newEmailInput.value.trim();
+            
+            if (!username || !password) {
+                showToast('Username and password are required', 'error');
+                return;
+            }
+            
+            if (!adminCredentials) {
+                showToast('Admin credentials not available', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/admin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        app_username: adminCredentials.username,
+                        app_password: adminCredentials.password,
+                        action: 'create_user',
+                        new_username: username,
+                        new_password: password,
+                        displayName: displayName,
+                        mail: email
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message || 'User created successfully', 'success');
+                    closeCreateUserModal();
+                    fetchUsers(); // Refresh user list
+                } else {
+                    showToast(data.error || 'User creation failed', 'error');
+                }
+            } catch (error) {
+                console.error('Create user error:', error);
+                showToast('Connection error', 'error');
+            }
+        }
+        
+        function logout() {
+            // Reset state
+            isAdminLogin = false;
+            currentUser = null;
+            adminCredentials = null;
+            
+            // Clear inputs
+            usernameInput.value = '';
+            passwordInput.value = '';
+            
+            // Reset role toggle
+            roleIcon.className = 'fas fa-user';
+            roleText.textContent = 'User Mode';
+            switchRoleBtn.textContent = 'Switch to Admin';
+            
+            // Show login screen
+            userDashboard.style.display = 'none';
+            adminDashboard.style.display = 'none';
+            loginScreen.style.display = 'block';
+        }
+        
+        function showToast(message, type) {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            
+            // Add to body
+            document.body.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Remove after delay
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add toast styles dynamically
+        const toastStyles = document.createElement('style');
+        toastStyles.textContent = `
+            .toast {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 500;
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                transform: translateY(100px);
+                opacity: 0;
+                transition: all 0.3s ease;
+                z-index: 3000;
+            }
+            
+            .toast.show {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            
+            .toast-error {
+                background: var(--error);
+            }
+            
+            .toast-success {
+                background: var(--success);
+            }
+        `;
+        document.head.appendChild(toastStyles);
+        
+        // Mock API responses for demonstration
+        window.mockApiResponse = function() {
+            return {
+                success: true,
+                user_info: {
+                    username: "johndoe",
+                    displayName: "John Doe",
+                    domain: "example.com",
+                    mail: "john.doe@example.com",
+                    dn: "CN=John Doe,OU=Users,DC=example,DC=com",
+                    memberOf: ["Domain Users", "Marketing Team", "Project Managers"]
+                },
+                users: [
+                    {
+                        username: "johndoe",
+                        displayName: "John Doe",
+                        mail: "john.doe@example.com"
+                    },
+                    {
+                        username: "janedoe",
+                        displayName: "Jane Doe",
+                        mail: "jane.doe@example.com"
+                    },
+                    {
+                        username: "mike_smith",
+                        displayName: "Mike Smith",
+                        mail: "mike.smith@example.com"
+                    }
+                ]
+            };
+        }
+    </script>
+</body>
+</html>
