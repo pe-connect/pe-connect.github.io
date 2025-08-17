@@ -148,7 +148,203 @@
             color: var(--primary);
             margin-right: 10px;
         }
-
+  .tab-container {
+            background: white;
+            position: sticky;
+            top: 70px;
+            z-index: 90;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .tab.active {
+            color: var(--primary);
+        }
+        
+        .tab.active:after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Group Cards */
+        .group-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .group-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .group-card-header {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .group-icon-lg {
+            width: 40px;
+            height: 40px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            font-size: 18px;
+            color: var(--primary);
+        }
+        
+        .group-card-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .group-card-body {
+            padding: 15px;
+        }
+        
+        .group-detail {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .group-detail i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+        }
+        
+        .group-members {
+            margin-top: 15px;
+        }
+        
+        .member-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .member-tag {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        
+        /* Group Actions Modal */
+        #group-actions-modal .modal-body {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        
+        .member-item:last-child {
+            border-bottom: none;
+        }
+        
+        .member-item .user-avatar-xs {
+            width: 30px;
+            height: 30px;
+            background: rgba(67, 97, 238, 0.1);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+            font-size: 14px;
+            color: var(--primary);
+        }
+        
+        .member-item .member-name {
+            flex: 1;
+        }
+        
+       
+        /* Add Member Input */
+        .add-member-input {
+            position: relative;
+            margin-top: 15px;
+        }
+        
+        .add-member-input i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+        
+        .add-member-input input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            display: none;
+        }
+        
+        .suggestion-item {
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        
+        .suggestion-item:hover {
+            background: #f5f5f5;
+        }
         .role-toggle .btn-switch {
             margin-left: auto;
             padding: 8px 15px;
@@ -497,30 +693,34 @@
         }
 
         /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
+       .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: flex-start; /* Changed from center to flex-start */
+    padding-top: 50px; /* Added padding at top */
+    overflow-y: auto; /* Allow scrolling if needed */
+}
 
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 500px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh; /* Limit height */
+    overflow-y: auto; /* Make content scrollable */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    margin: 20px 0; /* Added margin */
+}
 
         .modal.show .modal-content {
             transform: translateY(0);
@@ -799,6 +999,7 @@
     </div>
     
     <!-- Admin Dashboard -->
+     <!-- Admin Dashboard -->
     <div id="admin-dashboard" class="dashboard-screen">
         <div class="app-bar">
             <h2>Admin Dashboard</h2>
@@ -812,22 +1013,49 @@
             </div>
         </div>
         
-        <div class="search-container">
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="search-users" placeholder="Search users...">
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="users">Users</div>
+                <div class="tab" data-tab="groups">Groups</div>
             </div>
         </div>
         
-        <div class="user-grid" id="user-grid">
-            <!-- User cards will be generated here -->
+        <!-- Users Tab -->
+        <div class="tab-content active" id="users-tab">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-users" placeholder="Search users...">
+                </div>
+            </div>
+            
+            <div class="user-grid" id="user-grid">
+                <!-- User cards will be generated here -->
+            </div>
+            
+            <button class="add-user-btn" id="add-user-btn">
+                <i class="fas fa-plus"></i>
+            </button>
         </div>
         
-        <button class="add-user-btn" id="add-user-btn">
-            <i class="fas fa-plus"></i>
-        </button>
+        <!-- Groups Tab -->
+       <!-- Groups Tab -->
+<div class="tab-content" id="groups-tab">
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="search-groups" placeholder="Search groups...">
+        </div>
     </div>
     
+    <div class="group-list-container" id="group-list-container">
+        <!-- Group cards will be generated here -->
+    </div>
+    
+    <button class="add-user-btn" id="add-group-btn">
+        <i class="fas fa-plus"></i>
+    </button>
+</div>
     <!-- Create User Modal -->
     <div class="modal" id="create-user-modal">
         <div class="modal-content">
@@ -864,7 +1092,56 @@
             </div>
         </div>
     </div>
-    
+     <div class="modal" id="create-group-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            Create New Group
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="new-group-name">Group Name*</label>
+                <input type="text" id="new-group-name" class="form-control" placeholder="Enter group name">
+            </div>
+            <div class="form-group">
+                <label for="new-group-description">Description</label>
+                <input type="text" id="new-group-description" class="form-control" placeholder="Enter description">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancel-create-group">Cancel</button>
+            <button class="btn btn-primary" id="confirm-create-group">Create</button>
+        </div>
+    </div>
+</div>
+     <!-- Group Actions Modal -->
+    <div class="modal" id="group-actions-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                Group Management
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Group Members</label>
+                    <div id="group-members-list">
+                        <!-- Members will be loaded here -->
+                    </div>
+                    
+                    <div class="add-member-input">
+                        <i class="fas fa-user-plus"></i>
+                        <input type="text" id="add-member-input" placeholder="Add member...">
+                        <div class="suggestions-dropdown" id="member-suggestions"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="delete-group-btn">
+                    <i class="fas fa-trash"></i> Delete Group
+                </button>
+                <button class="btn btn-secondary" id="cancel-group-actions">Cancel</button>
+                <button class="btn btn-primary" id="save-group-actions">Save Changes</button>
+            </div>
+        </div>
+    </div>
     <!-- User Actions Modal -->
     <div class="modal" id="user-actions-modal">
         <div class="modal-content">
@@ -895,13 +1172,14 @@
     
     <script>
         // API Configuration
-        const API_BASE_URL = 'https://4fa5c76fcec7.ngrok-free.app';
+        const API_BASE_URL = 'https://a75bcd4cddd5.ngrok-free.app';
         let isAdminLogin = false;
         let currentUser = null;
         let adminCredentials = null;
         let allGroups = [];
         let currentSelectedUser = null;
-        
+         let currentTab = 'users';
+        let currentSelectedGroup = null;
         // DOM Elements
         const loginScreen = document.getElementById('login-screen');
         const userDashboard = document.getElementById('user-dashboard');
@@ -948,7 +1226,9 @@
         const deleteUserBtn = document.getElementById('delete-user-btn');
         const cancelActionsBtn = document.getElementById('cancel-actions');
         const saveUserActionsBtn = document.getElementById('save-user-actions');
-        
+        // Add these with your other DOM element declarations
+const createGroupModal = document.getElementById('create-group-modal');
+const groupActionsModal = document.getElementById('group-actions-modal');
         // Event Listeners
         document.addEventListener('DOMContentLoaded', initApp);
         
@@ -956,9 +1236,21 @@
             // Login Screen
             switchRoleBtn.addEventListener('click', toggleLoginRole);
             loginBtn.addEventListener('click', handleLogin);
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', switchTab);
+            });
             
-            // User Dashboard
-            userLogoutBtn.addEventListener('click', logout);
+            // Groups search
+            document.getElementById('search-groups').addEventListener('input', filterGroups);
+            
+            // Create group modal
+            document.getElementById('add-group-btn').addEventListener('click', showCreateGroupModal);
+            document.getElementById('cancel-create-group').addEventListener('click', closeCreateGroupModal);
+            document.getElementById('confirm-create-group').addEventListener('click', createGroup);
+            
+            
+            
+           
             
             // Admin Dashboard
             adminRefreshBtn.addEventListener('click', fetchUsers);
@@ -1063,7 +1355,199 @@
                 loginBtn.classList.remove('loading');
             }
         }
+        // Add these new functions
+        function switchTab(e) {
+    const tab = e.target.closest('.tab');
+    if (!tab || tab.classList.contains('active')) return;
+    
+    // Update active tab
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    
+    // Update active content
+    const tabId = tab.dataset.tab;
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(`${tabId}-tab`).classList.add('active');
+    
+    currentTab = tabId;
+    
+    // Load data if needed
+    if (tabId === 'groups') {
+        loadGroups().then(groups => {
+            renderGroups(groups);
+        });
+    } else if (tabId === 'users') {
+        fetchUsers();
+    }
+}
+      function renderGroups(groups) {
+    const container = document.getElementById('group-list-container');
+    container.innerHTML = '';
+    
+    if (groups && groups.length > 0) {
+        groups.forEach(group => {
+            const groupCard = document.createElement('div');
+            groupCard.className = 'group-card';
+            
+            groupCard.innerHTML = `
+                <div class="group-card-header">
+                    <div class="group-icon-lg">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="group-card-info">
+                        <h3>${group.Name || 'Unnamed Group'}</h3>
+                    </div>
+                  
+                </div>
+                ${group.Description ? `
+                <div class="group-card-body">
+                    <div class="group-detail">
+                        <i class="fas fa-info-circle"></i>
+                        <span>${group.Description}</span>
+                    </div>
+                </div>` : ''}
+            `;
+            
+            // Add click handler for delete button
         
+            
+            container.appendChild(groupCard);
+        });
+    } else {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-user-friends"></i>
+                <p>No groups found</p>
+            </div>
+        `;
+    }
+}
+        
+        function filterGroups() {
+            const query = document.getElementById('search-groups').value.toLowerCase();
+            const cards = document.querySelectorAll('.group-card');
+            
+            cards.forEach(card => {
+                const groupName = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                const description = card.querySelectorAll('.group-detail span')[0]?.textContent.toLowerCase() || '';
+                
+                if (groupName.includes(query) || description.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        function showCreateGroupModal() {
+            document.getElementById('new-group-name').value = '';
+            document.getElementById('new-group-description').value = '';
+            
+            createGroupModal.style.display = 'flex';
+            setTimeout(() => {
+                createGroupModal.classList.add('show');
+            }, 10);
+        }
+        
+        function closeCreateGroupModal() {
+            createGroupModal.classList.remove('show');
+            setTimeout(() => {
+                createGroupModal.style.display = 'none';
+            }, 300);
+        }
+        
+        async function createGroup() {
+    const name = document.getElementById('new-group-name').value.trim();
+    const description = document.getElementById('new-group-description').value.trim();
+    
+    if (!name) {
+        showToast('Group name is required', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                app_username: adminCredentials.username,
+                app_password: adminCredentials.password,
+                action: "create_group",
+                group_name: name,
+                description: description
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast(`Group ${name} created successfully`, 'success');
+            closeCreateGroupModal();
+            loadGroups().then(groups => {
+                renderGroups(groups);
+            });
+        } else {
+            showToast(data.error || 'Failed to create group', 'error');
+        }
+    } catch (error) {
+        console.error('Create group error:', error);
+        showToast('Connection error', 'error');
+    }
+}
+        
+        
+       
+        
+        function closeGroupActionsModal() {
+            groupActionsModal.classList.remove('show');
+            setTimeout(() => {
+                groupActionsModal.style.display = 'none';
+            }, 300);
+        }
+        
+       
+     
+        
+        async function deleteGroup(groupName) {
+    if (!groupName) return;
+    
+    if (!confirm(`Are you sure you want to delete group ${groupName}?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                app_username: adminCredentials.username,
+                app_password: adminCredentials.password,
+                action: "delete_group",
+                group_name: groupName
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast(`Group ${groupName} deleted successfully`, 'success');
+            loadGroups().then(groups => {
+                renderGroups(groups);
+            });
+        } else {
+            showToast(data.error || 'Failed to delete group', 'error');
+        }
+    } catch (error) {
+        console.error('Delete group error:', error);
+        showToast('Connection error', 'error');
+    }
+}
         function showUserDashboard() {
             // Update user info
             userGreeting.textContent = `Welcome, ${currentUser.username || 'User'}`;
@@ -1214,6 +1698,13 @@
             userDashboard.style.display = 'none';
             adminDashboard.style.display = 'block';
             adminDashboard.classList.add('slide-in-right');
+             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.tab[data-tab="users"]').classList.add('active');
+    
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('users-tab').classList.add('active');
+    
+    fetchUsers(); // Load users by default
         }
         
         async function loadGroups() {
