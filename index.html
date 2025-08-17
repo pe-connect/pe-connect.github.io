@@ -923,8 +923,8 @@
             <h2 id="user-greeting">Welcome, User</h2>
             <div class="actions">
                 <button id="user-logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+    <i class="fas fa-sign-out-alt"></i>
+</button>
             </div>
         </div>
         
@@ -1242,7 +1242,8 @@ const groupActionsModal = document.getElementById('group-actions-modal');
             
             // Groups search
             document.getElementById('search-groups').addEventListener('input', filterGroups);
-            
+            // Add this with your other event listeners in initApp()
+            userLogoutBtn.addEventListener('click', logout);
             // Create group modal
             document.getElementById('add-group-btn').addEventListener('click', showCreateGroupModal);
             document.getElementById('cancel-create-group').addEventListener('click', closeCreateGroupModal);
