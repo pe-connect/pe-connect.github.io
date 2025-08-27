@@ -873,6 +873,130 @@
             .login-form {
                 padding: 20px;
             }
+          /* File List Styles */
+.file-list-container {
+    margin-bottom: 20px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.file-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(67, 97, 238, 0.1);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    font-size: 18px;
+    color: var(--primary);
+}
+
+.file-info {
+    flex: 1;
+}
+
+.file-name {
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.file-size {
+    font-size: 12px;
+    color: var(--text-light);
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.file-action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(67, 97, 238, 0.1);
+    color: var(--primary);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-action-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.empty-files {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-light);
+}
+
+.empty-files i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    opacity: 0.3;
+}
+
+/* Upload Section Styles */
+.upload-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.upload-section h4 {
+    margin-bottom: 15px;
+    color: var(--text-dark);
+}
+
+.upload-controls {
+    display: flex;
+    gap: 10px;
+}
+
+#file-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.btn {
+    white-space: nowrap;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
         }
     </style>
 </head>
@@ -918,86 +1042,111 @@
     </div>
     
     <!-- User Dashboard -->
-    <div id="user-dashboard" class="dashboard-screen">
-        <div class="app-bar">
-            <h2 id="user-greeting">Welcome, User</h2>
-            <div class="actions">
-                <button id="user-logout">
-    <i class="fas fa-sign-out-alt"></i>
-</button>
-            </div>
-        </div>
-        
-        <div class="user-profile-header">
-            <div class="user-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <h2 id="user-display-name">John Doe</h2>
-        </div>
-        
-        <div class="dashboard-content">
-            <h3 class="section-title">Account Information</h3>
-            
-            <div class="info-card">
-                <i class="fas fa-user"></i>
-                <div class="info-content">
-                    <h3>Username</h3>
-                    <p id="user-username">johndoe</p>
-                </div>
-            </div>
-            
-            <div class="info-card">
-                <i class="fas fa-globe"></i>
-                <div class="info-content">
-                    <h3>Domain</h3>
-                    <p id="user-domain">example.com</p>
-                </div>
-            </div>
-            
-            <div class="info-card">
-                <i class="fas fa-envelope"></i>
-                <div class="info-content">
-                    <h3>Email</h3>
-                    <p id="user-email">john.doe@example.com</p>
-                </div>
-            </div>
-            
-            <div class="info-card">
-                <i class="fas fa-id-card"></i>
-                <div class="info-content">
-                    <h3>Distinguished Name</h3>
-                    <p id="user-dn">CN=John Doe,OU=Users,DC=example,DC=com</p>
-                </div>
-            </div>
-            
-            <h3 class="section-title">Group Memberships (<span id="group-count">3</span>)</h3>
-            
-            <ul class="group-list" id="group-list">
-                <li class="group-item">
-                    <div class="group-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="group-name">Domain Users</div>
-                    <i class="fas fa-chevron-right"></i>
-                </li>
-                <li class="group-item">
-                    <div class="group-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="group-name">Marketing Team</div>
-                    <i class="fas fa-chevron-right"></i>
-                </li>
-                <li class="group-item">
-                    <div class="group-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="group-name">Project Managers</div>
-                    <i class="fas fa-chevron-right"></i>
-                </li>
-            </ul>
+<div id="user-dashboard" class="dashboard-screen">
+    <div class="app-bar">
+        <h2 id="user-greeting">Welcome, User</h2>
+        <div class="actions">
+            <button id="user-logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
         </div>
     </div>
-    
+
+    <div class="user-profile-header">
+        <div class="user-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <h2 id="user-display-name">John Doe</h2>
+    </div>
+
+    <div class="dashboard-content">
+        <!-- Account Information -->
+        <h3 class="section-title">Account Information</h3>
+
+        <div class="info-card">
+            <i class="fas fa-user"></i>
+            <div class="info-content">
+                <h3>Username</h3>
+                <p id="user-username">johndoe</p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <i class="fas fa-globe"></i>
+            <div class="info-content">
+                <h3>Domain</h3>
+                <p id="user-domain">example.com</p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <i class="fas fa-envelope"></i>
+            <div class="info-content">
+                <h3>Email</h3>
+                <p id="user-email">john.doe@example.com</p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <i class="fas fa-id-card"></i>
+            <div class="info-content">
+                <h3>Distinguished Name</h3>
+                <p id="user-dn">CN=John Doe,OU=Users,DC=example,DC=com</p>
+            </div>
+        </div>
+
+        <!-- Group Memberships -->
+        <h3 class="section-title">Group Memberships (<span id="group-count">3</span>)</h3>
+
+        <ul class="group-list" id="group-list">
+            <li class="group-item">
+                <div class="group-icon"><i class="fas fa-users"></i></div>
+                <div class="group-name">Domain Users</div>
+                <i class="fas fa-chevron-right"></i>
+            </li>
+            <li class="group-item">
+                <div class="group-icon"><i class="fas fa-users"></i></div>
+                <div class="group-name">Marketing Team</div>
+                <i class="fas fa-chevron-right"></i>
+            </li>
+            <li class="group-item">
+                <div class="group-icon"><i class="fas fa-users"></i></div>
+                <div class="group-name">Project Managers</div>
+                <i class="fas fa-chevron-right"></i>
+            </li>
+        </ul>
+
+        <!-- File Management -->
+        <h3 class="section-title">File Management</h3>
+
+        <div class="info-card">
+            <i class="fas fa-folder"></i>
+            <div class="info-content">
+                <h3>Network Drive</h3>
+                <p id="user-drive">Loading drive information...</p>
+            </div>
+        </div>
+
+        <div id="file-section">
+            <div class="file-list-container" id="file-list-container">
+                <div class="loading-groups">Loading files...</div>
+            </div>
+
+            <div class="upload-section"
+                style="margin-top: 20px; padding: 15px; background: white; border-radius: 15px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);">
+                <h4 style="margin-bottom: 15px; color: var(--text-dark);">Upload File</h4>
+                <div style="display: flex; gap: 10px;">
+                    <input type="file" id="file-input"
+                        style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    <button class="btn btn-primary" id="upload-btn" style="white-space: nowrap;">
+                        <i class="fas fa-upload"></i> Upload
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end dashboard-content -->
+</div> <!-- end user-dashboard -->
+
     <!-- Admin Dashboard -->
      <!-- Admin Dashboard -->
     <div id="admin-dashboard" class="dashboard-screen">
@@ -1172,7 +1321,7 @@
     
     <script>
         // API Configuration
-        const API_BASE_URL = 'https://0ba1b22ae05e.ngrok-free.app';
+        const API_BASE_URL = 'https://48e3053748b3.ngrok-free.app';
         let isAdminLogin = false;
         let currentUser = null;
         let adminCredentials = null;
@@ -1584,6 +1733,8 @@ const groupActionsModal = document.getElementById('group-actions-modal');
             adminDashboard.style.display = 'none';
             userDashboard.style.display = 'block';
             userDashboard.classList.add('slide-in-right');
+            // Load user files
+loadUserFiles();
         }
         
         async function fetchUsers() {
@@ -1970,7 +2121,192 @@ const groupActionsModal = document.getElementById('group-actions-modal');
                 showToast('Connection error', 'error');
             }
         }
+  // Load user files
+async function loadUserFiles() {
+    if (!currentUser) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/applogin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: currentUser.username,
+                password: passwordInput.value
+            })
+        });
         
+        const data = await response.json();
+        
+        if (data.success && data.user_info) {
+            // Update drive information - FIXED: using share_path instead of unc_path
+            const driveElement = document.getElementById('user-drive');
+            if (data.user_info.share_path) {
+                driveElement.textContent = `Network Share: ${data.user_info.share_path}`;
+            } else {
+                driveElement.textContent = 'No network share assigned';
+            }
+            
+            // Render files
+            renderFiles(data.user_info.files || []);
+        } else {
+            document.getElementById('user-drive').textContent = 'Error loading drive information';
+        }
+    } catch (error) {
+        console.error('Error loading files:', error);
+        document.getElementById('user-drive').textContent = 'Error loading drive information';
+    }
+}
+// Render files list
+function renderFiles(files) {
+    const container = document.getElementById('file-list-container');
+    
+    if (files.length === 0) {
+        container.innerHTML = `
+            <div class="empty-files">
+                <i class="fas fa-folder-open"></i>
+                <p>No files found in your drive</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    files.forEach(file => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        
+        // Get file icon based on extension
+        const extension = file.name.split('.').pop().toLowerCase();
+        let icon = 'fa-file';
+        
+        if (['pdf'].includes(extension)) icon = 'fa-file-pdf';
+        else if (['doc', 'docx'].includes(extension)) icon = 'fa-file-word';
+        else if (['xls', 'xlsx'].includes(extension)) icon = 'fa-file-excel';
+        else if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) icon = 'fa-file-image';
+        else if (['zip', 'rar', '7z'].includes(extension)) icon = 'fa-file-archive';
+        
+        fileItem.innerHTML = `
+    <div class="file-icon">
+        <i class="fas ${icon}"></i>
+    </div>
+    <div class="file-info">
+        <div class="file-name">${file.name}</div>
+        <div class="file-size">${formatFileSize(file.size)}</div>
+    </div>
+    <div class="file-actions">
+        <button class="file-action-btn delete-btn" data-filename="${file.name}">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+`;
+
+        
+        container.appendChild(fileItem);
+    });
+    
+    // Add event listeners to buttons
+    document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const filename = e.currentTarget.dataset.filename;
+            downloadFile(filename);
+        });
+    });
+    
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const filename = e.currentTarget.dataset.filename;
+            deleteFile(filename);
+        });
+    });
+}
+
+// Format file size
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Download file
+function downloadFile(filename) {
+    window.open(`${API_BASE_URL}/download/${currentUser.username}/${filename}`, '_blank');
+}
+
+// Delete file
+async function deleteFile(filename) {
+    if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: currentUser.username,
+                password: passwordInput.value, // Note: This might need to be stored securely
+                filename: filename
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('File deleted successfully', 'success');
+            loadUserFiles(); // Refresh file list
+        } else {
+            showToast(data.error || 'Failed to delete file', 'error');
+        }
+    } catch (error) {
+        console.error('Error deleting file:', error);
+        showToast('Error deleting file', 'error');
+    }
+}
+
+// Upload file
+document.getElementById('upload-btn').addEventListener('click', async function() {
+    const fileInput = document.getElementById('file-input');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        showToast('Please select a file to upload', 'error');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('username', currentUser.username);
+    formData.append('password', passwordInput.value); // Note: This might need to be stored securely
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('File uploaded successfully', 'success');
+            fileInput.value = ''; // Clear file input
+            loadUserFiles(); // Refresh file list
+        } else {
+            showToast(data.error || 'Failed to upload file', 'error');
+        }
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        showToast('Error uploading file', 'error');
+    }
+});
         async function deleteUser() {
             if (!currentSelectedUser) return;
             
