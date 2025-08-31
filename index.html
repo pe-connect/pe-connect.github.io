@@ -1166,6 +1166,7 @@
             <div class="tabs">
                 <div class="tab active" data-tab="users">Users</div>
                 <div class="tab" data-tab="groups">Groups</div>
+                <div class="tab" data-tab="rdp">RDP</div> <!-- Add this line -->
             </div>
         </div>
         
@@ -1204,6 +1205,34 @@
     <button class="add-user-btn" id="add-group-btn">
         <i class="fas fa-plus"></i>
     </button>
+</div>
+<!-- RDP Tab -->
+<div class="tab-content" id="rdp-tab">
+    <div class="rdp-container" style="padding: 20px; text-align: center;">
+        <div class="rdp-card" style="background: white; border-radius: 15px; padding: 30px; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); max-width: 500px; margin: 0 auto;">
+            <div class="rdp-icon" style="font-size: 48px; color: var(--primary); margin-bottom: 20px;">
+                <i class="fas fa-desktop"></i>
+            </div>
+            <h3 style="color: var(--text-dark); margin-bottom: 15px;">Remote Desktop Connection</h3>
+            <p style="color: var(--text-light); margin-bottom: 25px;">Click the button below to download the RDP connection file for remote access to the server.</p>
+            <button id="download-rdp-btn" class="btn btn-primary" style="padding: 12px 24px; font-size: 16px;">
+                <i class="fas fa-download"></i> Download RDP File
+            </button>
+            <div class="rdp-info" style="margin-top: 25px; padding: 15px; background: rgba(67, 97, 238, 0.05); border-radius: 10px; text-align: left;">
+                <h4 style="color: var(--text-dark); margin-bottom: 10px;">Connection Details</h4>
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <i class="fas fa-server" style="color: var(--primary); width: 20px;"></i>
+                    <span style="margin-left: 10px; color: var(--text-dark);">Server: </span>
+                    <span id="rdp-server" style="margin-left: 5px; font-weight: 500;">0.tcp.ap.ngrok.io:15168</span>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-user" style="color: var(--primary); width: 20px;"></i>
+                    <span style="margin-left: 10px; color: var(--text-dark);">Username: </span>
+                    <span style="margin-left: 5px; font-weight: 500;">Administrator</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
     <!-- Create User Modal -->
     <div class="modal" id="create-user-modal">
@@ -1399,7 +1428,31 @@ const groupActionsModal = document.getElementById('group-actions-modal');
             document.getElementById('confirm-create-group').addEventListener('click', createGroup);
             
             
-            
+            // Add this to your initApp() function
+document.getElementById('download-rdp-btn').addEventListener('click', downloadRDP);
+
+// Add this function to your JavaScript
+function downloadRDP() {
+    // Ngrok tunnel details
+    const tunnelUrl = "0.tcp.ap.ngrok.io:15168";
+
+    // RDP File Content
+    const rdpContent = `
+full address:s:${tunnelUrl}
+username:s:Administrator
+prompt for credentials:i:1
+administrative session:i:1
+    `;
+
+    // Create Blob & Force Download
+    const blob = new Blob([rdpContent], { type: 'application/rdp' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = "connect.rdp";
+    link.click();
+    
+    showToast('RDP file downloaded successfully', 'success');
+}
            
             
             // Admin Dashboard
