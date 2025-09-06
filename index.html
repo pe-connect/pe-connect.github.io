@@ -1153,6 +1153,9 @@
         <div class="app-bar">
             <h2>Admin Dashboard</h2>
             <div class="actions">
+                 <button id="admin-monitoring">
+            <i class="fas fa-chart-bar"></i>
+        </button>
                 <button id="admin-refresh">
                     <i class="fas fa-sync-alt"></i>
                 </button>
@@ -1417,7 +1420,7 @@ const groupActionsModal = document.getElementById('group-actions-modal');
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', switchTab);
             });
-            
+            document.getElementById('admin-monitoring').addEventListener('click', redirectToMonitoring);
             // Groups search
             document.getElementById('search-groups').addEventListener('input', filterGroups);
             // Add this with your other event listeners in initApp()
@@ -1643,7 +1646,9 @@ administrative session:i:1
                 }
             });
         }
-        
+        function redirectToMonitoring() {
+    window.open('https://nickel-dimensions-meant-equipped.trycloudflare.com/', '_blank');
+}
         function showCreateGroupModal() {
             document.getElementById('new-group-name').value = '';
             document.getElementById('new-group-description').value = '';
