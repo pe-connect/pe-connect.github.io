@@ -21,7 +21,38 @@
             --warning: #FFC107;
             --danger: #DC3545;
         }
+        /* Add to your existing CSS */
+.confirmation-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+}
 
+.confirmation-content {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.confirmation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
         * {
             margin: 0;
             padding: 0;
@@ -1001,6 +1032,12 @@
     </style>
 </head>
 <body>
+       <div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--background); display: flex; justify-content: center; align-items: center; z-index: 9999;">
+        <div style="text-align: center;">
+            <div class="spinner" style="width: 50px; height: 50px; border: 5px solid rgba(67, 97, 238, 0.2); border-radius: 50%; border-top-color: var(--primary); animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
+            <p style="color: var(--text-dark); font-weight: 500;">Loading PE Connect...</p>
+        </div>
+    </div>
     <!-- Login Screen -->
     <div id="login-screen" class="container">
         <div class="login-header">
@@ -1294,6 +1331,7 @@
         </div>
     </div>
 </div>
+
      <!-- Group Actions Modal -->
     <div class="modal" id="group-actions-modal">
         <div class="modal-content">
@@ -1367,7 +1405,7 @@
         const adminDashboard = document.getElementById('admin-dashboard');
         const createUserModal = document.getElementById('create-user-modal');
         const userActionsModal = document.getElementById('user-actions-modal');
-        
+        let userPassword = ""; 
         // Login Elements
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
@@ -1415,6 +1453,20 @@ const groupActionsModal = document.getElementById('group-actions-modal');
         
         function initApp() {
             // Login Screen
+           loginScreen.style.display = 'none';
+    document.getElementById('loading-screen').style.display = 'flex';
+    
+    checkSession().then(hasSession => {
+        if (hasSession) {
+            // Session exists, we're already showing the right dashboard
+            document.getElementById('loading-screen').style.display = 'none';
+        } else {
+            // No session, show login screen
+            document.getElementById('loading-screen').style.display = 'none';
+            loginScreen.style.display = 'block';
+            setupLoginHandlers();
+        }
+    });
             switchRoleBtn.addEventListener('click', toggleLoginRole);
             loginBtn.addEventListener('click', handleLogin);
             document.querySelectorAll('.tab').forEach(tab => {
@@ -1433,11 +1485,17 @@ const groupActionsModal = document.getElementById('group-actions-modal');
             
             // Add this to your initApp() function
 document.getElementById('download-rdp-btn').addEventListener('click', downloadRDP);
-
+function setupLoginHandlers() {
+    // Login Screen
+    switchRoleBtn.addEventListener('click', toggleLoginRole);
+    loginBtn.addEventListener('click', handleLogin);
+    
+    // Other handlers that should only be set up when no session exists
+}
 // Add this function to your JavaScript
 function downloadRDP() {
     // Ngrok tunnel details
-    const tunnelUrl = "0.tcp.in.ngrok.io:18346";
+    const tunnelUrl = "0.tcp.in.ngrok.io:10791";
 
     // RDP File Content
     const rdpContent = `
@@ -1497,7 +1555,44 @@ administrative session:i:1
                 switchRoleBtn.textContent = 'Switch to Admin';
             }
         }
+        async function deleteUser() {
+    if (!currentSelectedUser) return;
+    
+    const username = currentSelectedUser.username;
+    
+    if (!confirm(`Are you sure you want to delete user ${username}? This action cannot be undone.`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/admin`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                app_username: adminCredentials.username,
+                app_password: adminCredentials.password,
+                action: "delete_user",
+                username: username
+            }),
+            credentials: "include"
+        });
         
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast(`User ${username} deleted successfully`, 'success');
+            closeUserActionsModal();
+            fetchUsers(); // Refresh user list
+        } else {
+            showToast(data.error || 'Failed to delete user', 'error');
+        }
+    } catch (error) {
+        console.error('Delete user error:', error);
+        showToast('Connection error', 'error');
+    }
+}
         async function handleLogin() {
             const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
@@ -1506,12 +1601,12 @@ administrative session:i:1
                 showToast('Please enter both username and password', 'error');
                 return;
             }
-            
+              userPassword = password; // ADD THIS LINE
             // Show loading state
             loginBtn.classList.add('loading');
             
             try {
-                const endpoint = isAdminLogin ? '/admin' : '/applogin';
+                const endpoint = isAdminLogin ? '/admin_login' : '/applogin';
                 const body = isAdminLogin ? {
                     app_username: username,
                     app_password: password
@@ -1525,7 +1620,8 @@ administrative session:i:1
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(body)
+                    body: JSON.stringify(body),
+                     credentials: "include"
                 });
                 
                 const data = await response.json();
@@ -1535,7 +1631,7 @@ administrative session:i:1
                         // Save admin credentials for subsequent requests
                         adminCredentials = {
                             username: username,
-                            password: password
+                            userPassword: password
                         };
                         
                         // Load groups and users
@@ -1647,7 +1743,7 @@ administrative session:i:1
             });
         }
         function redirectToMonitoring() {
-    window.open('https://ton-welsh-worked-nigeria.trycloudflare.com/', '_blank');
+    window.open('https://deficit-tabs-sl-lobby.trycloudflare.com/', '_blank');
 }
         function showCreateGroupModal() {
             document.getElementById('new-group-name').value = '';
@@ -1687,7 +1783,8 @@ administrative session:i:1
                 action: "create_group",
                 group_name: name,
                 description: description
-            })
+            }),
+             credentials: "include" 
         });
         
         const data = await response.json();
@@ -1738,7 +1835,8 @@ administrative session:i:1
                 app_password: adminCredentials.password,
                 action: "delete_group",
                 group_name: groupName
-            })
+            }),
+             credentials: "include" 
         });
         
         const data = await response.json();
@@ -1758,6 +1856,13 @@ administrative session:i:1
 }
         function showUserDashboard() {
             // Update user info
+              document.getElementById('loading-screen').style.display = 'none';
+    loginScreen.style.display = 'none';
+    adminDashboard.style.display = 'none';
+    
+    // Show user dashboard
+    userDashboard.style.display = 'block';
+    userDashboard.classList.add('slide-in-right');
             userGreeting.textContent = `Welcome, ${currentUser.username || 'User'}`;
             userDisplayName.textContent = currentUser.displayName || 'User Profile';
             userUsername.textContent = currentUser.username || '';
@@ -1807,7 +1912,7 @@ loadUserFiles();
                     body: JSON.stringify({
                         app_username: adminCredentials.username,
                         app_password: adminCredentials.password
-                    })
+                    }), credentials: "include" 
                 });
                 
                 const data = await response.json();
@@ -1904,6 +2009,13 @@ loadUserFiles();
 
         
         function showAdminDashboard() {
+             document.getElementById('loading-screen').style.display = 'none';
+    loginScreen.style.display = 'none';
+    userDashboard.style.display = 'none';
+    
+    // Show admin dashboard
+    adminDashboard.style.display = 'block';
+    adminDashboard.classList.add('slide-in-right');
             loginScreen.style.display = 'none';
             userDashboard.style.display = 'none';
             adminDashboard.style.display = 'block';
@@ -1930,7 +2042,7 @@ loadUserFiles();
                         app_username: adminCredentials.username,
                         app_password: adminCredentials.password,
                         action: "get_groups"
-                    })
+                    }), credentials: "include" 
                 });
                 
                 const data = await response.json();
@@ -2024,7 +2136,7 @@ loadUserFiles();
                         displayName: displayName,
                         mail: email,
                         groups: groups
-                    })
+                    }), credentials: "include" 
                 });
                 
                 const data = await response.json();
@@ -2121,7 +2233,7 @@ loadUserFiles();
                             username: username,
                             current_password: "", // Not needed when using admin privileges
                             new_password: newPassword
-                        })
+                        }), credentials: "include" 
                     });
                     
                     const data = await response.json();
@@ -2151,7 +2263,7 @@ loadUserFiles();
                                 action: "add_to_group",
                                 username: username,
                                 group_name: groupName
-                            })
+                            }), credentials: "include" 
                         });
                     } else if (!shouldBeMember && isMember) {
                         // Remove from group
@@ -2166,7 +2278,7 @@ loadUserFiles();
                                 action: "remove_from_group",
                                 username: username,
                                 group_name: groupName
-                            })
+                            }), credentials: "include" 
                         });
                     }
                 }
@@ -2180,40 +2292,37 @@ loadUserFiles();
             }
         }
   // Load user files
+// Load user files
 async function loadUserFiles() {
     if (!currentUser) return;
     
     try {
-        const response = await fetch(`${API_BASE_URL}/applogin`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: currentUser.username,
-                password: passwordInput.value
-            })
+        const response = await fetch(`${API_BASE_URL}/get_user_files`, {
+            method: 'GET',
+            credentials: 'include' // This sends the session cookie
         });
         
         const data = await response.json();
         
-        if (data.success && data.user_info) {
-            // Update drive information - FIXED: using share_path instead of unc_path
+        if (data.success) {
+            // Update drive information
             const driveElement = document.getElementById('user-drive');
-            if (data.user_info.share_path) {
-                driveElement.textContent = `Network Share: ${data.user_info.share_path}`;
+            if (currentUser.share_path) {
+                driveElement.textContent = `Network Share: ${currentUser.share_path}`;
             } else {
                 driveElement.textContent = 'No network share assigned';
             }
             
             // Render files
-            renderFiles(data.user_info.files || []);
+            renderFiles(data.files || []);
         } else {
             document.getElementById('user-drive').textContent = 'Error loading drive information';
+            showToast(data.error || 'Failed to load files', 'error');
         }
     } catch (error) {
         console.error('Error loading files:', error);
         document.getElementById('user-drive').textContent = 'Error loading drive information';
+        showToast('Error loading files', 'error');
     }
 }
 // Render files list
@@ -2298,6 +2407,7 @@ function downloadFile(filename) {
 }
 
 // Delete file
+// Delete file
 async function deleteFile(filename) {
     if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
         return;
@@ -2310,10 +2420,10 @@ async function deleteFile(filename) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: currentUser.username,
-                password: passwordInput.value, // Note: This might need to be stored securely
                 filename: filename
-            })
+                // No need for username/password - using session
+            }),
+            credentials: 'include' // This sends the session cookie
         });
         
         const data = await response.json();
@@ -2342,13 +2452,15 @@ document.getElementById('upload-btn').addEventListener('click', async function()
     
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('username', currentUser.username);
-    formData.append('password', passwordInput.value); // Note: This might need to be stored securely
+    // Remove username/password from formData since we're using session
+    // formData.append('username', currentUser.username);
+    // formData.append('password', userPassword);
     
     try {
         const response = await fetch(`${API_BASE_URL}/upload`, {
             method: 'POST',
-            body: formData
+            body: formData,
+            credentials: 'include' // Use session instead of password
         });
         
         const data = await response.json();
@@ -2365,64 +2477,120 @@ document.getElementById('upload-btn').addEventListener('click', async function()
         showToast('Error uploading file', 'error');
     }
 });
-        async function deleteUser() {
-            if (!currentSelectedUser) return;
-            
-            if (!confirm(`Are you sure you want to delete user ${currentSelectedUser.username}? This action cannot be undone.`)) {
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/admin`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        app_username: adminCredentials.username,
-                        app_password: adminCredentials.password,
-                        action: "delete_user",
-                        username: currentSelectedUser.username
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    showToast(`User ${currentSelectedUser.username} deleted successfully`, 'success');
-                    closeUserActionsModal();
-                    fetchUsers(); // Refresh user list
-                } else {
-                    showToast(data.error || 'Failed to delete user', 'error');
-                }
-            } catch (error) {
-                console.error('Delete user error:', error);
-                showToast('Connection error', 'error');
-            }
-        }
+        // Delete file
+async function deleteFile(filename) {
+    if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                filename: filename
+                // Remove username/password since we're using session
+            }),
+            credentials: 'include' // Use session instead of password
+        });
         
-        function logout() {
-            // Reset all states
-            isAdminLogin = false;
-            currentUser = null;
-            adminCredentials = null;
-            allGroups = [];
-            currentSelectedUser = null;
-            
-            // Clear inputs
-            usernameInput.value = '';
-            passwordInput.value = '';
-            
-            // Hide all dashboards and show login screen
-            userDashboard.style.display = 'none';
-            adminDashboard.style.display = 'none';
-            loginScreen.style.display = 'block';
-            
-            // Reset role toggle
-            roleIcon.className = 'fas fa-user';
-            roleText.textContent = 'User Mode';
-            switchRoleBtn.textContent = 'Switch to Admin';
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('File deleted successfully', 'success');
+            loadUserFiles(); // Refresh file list
+        } else {
+            showToast(data.error || 'Failed to delete file', 'error');
         }
+    } catch (error) {
+        console.error('Error deleting file:', error);
+        showToast('Error deleting file', 'error');
+    }
+}
+    // Replace your existing checkSession function with this:
+async function checkSession() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/check_session`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            if (data.is_admin) {
+                // Restore admin session
+                adminCredentials = {
+                    username: data.username,
+                    password: '' 
+                };
+                await loadGroups();
+                await fetchUsers();
+                showAdminDashboard();
+                return true;
+            } else {
+                // Restore user session - don't ask for password again
+                currentUser = data.user_info;
+                showUserDashboard();
+                
+                // Try to load files without password (server will handle auth)
+                try {
+                    await loadUserFiles();
+                } catch (error) {
+                    console.error('Failed to load files:', error);
+                    // If file loading fails, show a message but don't prompt for password
+                    document.getElementById('file-section').innerHTML = 
+                        '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Unable to load files. Please try again later.</p></div>';
+                }
+                return true;
+            }
+        }
+        return false;
+      // No valid session found
+        document.getElementById('loading-screen').style.display = 'none';
+        loginScreen.style.display = 'block';
+        return false;
+        
+    } catch (error) {
+        console.error('Session check error:', error);
+        document.getElementById('loading-screen').style.display = 'none';
+        loginScreen.style.display = 'block';
+        return false;
+    }
+}
+       async function logout() {
+    try {
+        await fetch(`${API_BASE_URL}/logout_session`, {
+            method: 'POST',
+            credentials: 'include'
+        });
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+    
+    // Reset all states
+    isAdminLogin = false;
+    currentUser = null;
+    adminCredentials = null;
+    allGroups = [];
+    currentSelectedUser = null;
+    
+    // Clear inputs
+    usernameInput.value = '';
+    passwordInput.value = '';
+    
+    // Hide all dashboards and show login screen
+    userDashboard.style.display = 'none';
+    adminDashboard.style.display = 'none';
+    loginScreen.style.display = 'block';
+    
+    // Reset role toggle
+    roleIcon.className = 'fas fa-user';
+    roleText.textContent = 'User Mode';
+    switchRoleBtn.textContent = 'Switch to Admin';
+}
         
         function showToast(message, type = 'info') {
             // Create toast element
@@ -2484,6 +2652,16 @@ document.getElementById('upload-btn').addEventListener('click', async function()
             }
         `;
         document.head.appendChild(toastStyles);
+        // Handle page refresh
+window.addEventListener('beforeunload', function() {
+    // Show loading screen when page is about to refresh
+    document.getElementById('loading-screen').style.display = 'flex';
+});
+
+// Handle page load
+window.addEventListener('load', function() {
+    // The loading screen will be hidden by initApp() after session check
+});
     </script>
 </body>
 </html>
