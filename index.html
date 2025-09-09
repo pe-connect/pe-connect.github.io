@@ -1193,6 +1193,9 @@
                  <button id="admin-monitoring">
             <i class="fas fa-chart-bar"></i>
         </button>
+                  <button id="admin-storage">
+            <i class="fas fa-hdd"></i>
+        </button>
                 <button id="admin-refresh">
                     <i class="fas fa-sync-alt"></i>
                 </button>
@@ -1263,7 +1266,7 @@
                 <div style="display: flex; align-items: center; margin-bottom: 8px;">
                     <i class="fas fa-server" style="color: var(--primary); width: 20px;"></i>
                     <span style="margin-left: 10px; color: var(--text-dark);">Server: </span>
-                    <span id="rdp-server" style="margin-left: 5px; font-weight: 500;">0.tcp.in.ngrok.io:18346</span>
+                    <span id="rdp-server" style="margin-left: 5px; font-weight: 500;">0.tcp.in.ngrok.io:10791</span>
                 </div>
                 <div style="display: flex; align-items: center;">
                     <i class="fas fa-user" style="color: var(--primary); width: 20px;"></i>
@@ -1482,7 +1485,8 @@ const groupActionsModal = document.getElementById('group-actions-modal');
             document.getElementById('cancel-create-group').addEventListener('click', closeCreateGroupModal);
             document.getElementById('confirm-create-group').addEventListener('click', createGroup);
             
-            
+            // Add this with your other event listeners in initApp()
+document.getElementById('admin-storage').addEventListener('click', redirectToStorage);
             // Add this to your initApp() function
 document.getElementById('download-rdp-btn').addEventListener('click', downloadRDP);
 function setupLoginHandlers() {
@@ -1491,6 +1495,9 @@ function setupLoginHandlers() {
     loginBtn.addEventListener('click', handleLogin);
     
     // Other handlers that should only be set up when no session exists
+}
+function redirectToStorage() {
+    window.open('https://lbs-battle-corruption-sold.trycloudflare.com/', '_blank');
 }
 // Add this function to your JavaScript
 function downloadRDP() {
